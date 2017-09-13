@@ -1,0 +1,8 @@
+package lab03;
+
+public class RollingLabList implements RollingList {
+	public static void main() {
+	}
+	
+	
+}

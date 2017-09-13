@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;j&apos; in &apos;lab01.DiffUtil.findSmallestDiff(...)&apos; to &apos;secondNum&apos;&#x0A;- Original project: &apos;cs2420&apos;&#x0A;- Original element: &apos;lab01.DiffUtil.findSmallestDiff(int[]).j&apos;&#x0A;- Renamed element: &apos;j&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;j&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;lab01{DiffUtil.java[DiffUtil~findSmallestDiff~\[I@j!501!520!505!505!I!0!false" name="secondNum" references="true" stamp="1503697531492" version="1.0"/>
+</session>

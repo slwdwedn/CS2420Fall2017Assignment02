@@ -1,0 +1,6 @@
+package lab03;
+
+public class RollingLabList {
+	public static void main() {
+	}
+}

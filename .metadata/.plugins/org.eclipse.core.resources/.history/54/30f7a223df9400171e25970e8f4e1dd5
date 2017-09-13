@@ -1,0 +1,13 @@
+package lab03;
+
+
+/** 
+ * 
+ * PasswordGenerator needs to be generic so it can generate passwords for anything that 
+ * is Passwordable. 
+ */
+public interface PasswordGenerator<T extends Comparable<T>> extends Passwordable {
+	
+	public String generatePassword(Object key); // Change parameter type
+	
+}

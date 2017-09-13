@@ -1,0 +1,17 @@
+package lab03;
+
+public interface RollingList  {
+	public double getElement(int i);
+	
+	public void setElement(int i, double value);
+	
+	public void append(double value);
+	
+	public void prepend(double value);
+
+	public double removeLast();
+	
+	public double removeFirst();
+
+	public int size();
+}

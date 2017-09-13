@@ -1,0 +1,305 @@
+package assignment02;
+
+import java.util.NoSuchElementException;
+
+/**
+ * This class implements an Abstract Data Type that provides data insertion and 
+ * removal from the front and the rear of the list. The list is backed by an array
+ * which allows random access. The backing array is the actual data structure that
+ * stores the abstract data type. It can only doubles at this moment.
+ * 
+ * The list ensure its growth whenever a data is inserted by append and prepend method. 
+ * The growth rate is determined by two factor: relativeGrowthRate and absoluteGrowthRate.
+ * Data retrieval is available by calling getElement(int index). The corresponding element
+ * will be located inside of backing array which can be traced by the logical index.
+ * 
+ * @author --- Wei-Tung, T. student ---
+ * @version --- 09/07/2017 ---
+ */
+public class RollingList
+{
+	// Constants
+	private static final int DEFAULT_BACKARRAY_SIZE = 5;
+	/**
+	 *  Starting position for prepend method 
+	 */
+	private static final int PREPEND_POS = 0;
+
+	// Fields
+	public double[] list;
+	/**
+	 * This variable keeps track of the location of element 0
+	 */
+	private int frontIndex;
+	public int arrayCapacity;
+	/**
+	 * This variable keeps track of the total number of elements inside of the list
+	 */
+	private int elementSize;
+
+	/**
+	 * This variable determines the increment in size whenever the list grows
+	 */
+	private int absoluteGrowthRate;
+	/**
+	 * This variable the growth rate relative to the list size
+	 */
+	private float relativeGrowthRate;
+
+	/**
+	 *  This keeps track of the number of times something was written into an array 
+	 */
+	private int modificationCount;
+
+	// Constructor
+
+	/**
+	 * 
+	 * Creates a new rolling array with no elements, a backing array of size 5,
+	 * and the specified growth rate. The growth rate parameters must ensure
+	 * that the backing array always grows when needed.
+	 * 
+	 * @param relativeGrowthRate
+	 *            the growth rate multiplier
+	 * @param absoluteGrowthRate
+	 *            the growth rate constant
+	 * @throws IllegalArgumentException
+	 *             iff the growth rate does not ensure growth of the backing
+	 *             array
+	 */
+	public RollingList (float relativeGrowthRate, int absoluteGrowthRate)
+	{
+		list = new double[DEFAULT_BACKARRAY_SIZE];
+		arrayCapacity = DEFAULT_BACKARRAY_SIZE;
+
+		modificationCount = 0;
+		elementSize = 0;
+		frontIndex = 0;
+
+		/* Check if growth rate will ensure arrayCapacity to grow */
+		int newSize = calculateGrowthSize(relativeGrowthRate, absoluteGrowthRate);
+		if (newSize <= arrayCapacity)
+			throw new IllegalArgumentException();
+
+		this.absoluteGrowthRate = absoluteGrowthRate;
+		this.relativeGrowthRate = relativeGrowthRate;
+
+	}
+
+	// Private utility methods
+
+	/**
+	 * This method computes the new size of the growing array.
+	 * 
+	 * @return int - the size of array needed for the growth
+	 */
+	private int calculateGrowthSize(float relativeGrowthRate, int absoluteGrowthRate)
+	{
+		int newSize = (int) Math.ceil(arrayCapacity * relativeGrowthRate + absoluteGrowthRate);
+		return newSize;
+	}
+
+	/** 
+	 * Computes array index in the backing array. Computation varies when the element 0 index is 
+	 * negative. 
+	 * 
+	 * @return int - an index number used to locate actual location inside of backing array.
+	 */
+	private int calculateArrayIndex(int elementIndex, int firstIndex)
+	{
+		if (firstIndex >= 0)
+			return (elementIndex + firstIndex) % arrayCapacity;
+		return (elementIndex + firstIndex + arrayCapacity) % arrayCapacity;
+	}
+
+	/**
+	 * 
+	 * This methods ensure the list size is always large enough to hold any 
+	 * new data in the events of data appending and prepending. When desired
+	 * capacity is larger/equal to current array capacity, the size determined 
+	 * by calculateGrowthSize will grow to ensure continuous operations. When 
+	 * elements are being copied to a larger size of array, a data modification 
+	 * counter will be incremented. In addition, element 0 in Rolling list will 
+	 * be relocated to the 0th position of backing array, and front index will 
+	 * be updated accordingly.
+	 * 
+	 * @param desiredCapacity
+	 *            the needed capacity of the backing array
+	 */
+	private void ensureCapacity (int desiredCapacity)
+	{
+		int newSize = calculateGrowthSize(relativeGrowthRate, absoluteGrowthRate);
+
+		if (desiredCapacity >= arrayCapacity)
+		{
+			double[] tempArray = new double[newSize];
+			for (int copyIndex = 0; copyIndex < this.size(); copyIndex++)
+			{
+				tempArray[copyIndex] = getElement(copyIndex);
+				modificationCount++;
+			}
+
+			list = tempArray;
+			arrayCapacity = newSize;
+			frontIndex = 0;
+		}
+
+	}
+
+
+
+	// Supported list ADT operations.
+
+	/**
+	 * 
+	 * Retrieves a value from the list.
+	 * 
+	 * @param i - the element to retrieve
+	 * @return - the value of the specified element
+	 *          
+	 * @exception - IndexOutOfBoundsException
+	 * 					If attempt to access index outside of current element size. 
+	 *            
+	 */
+	public double getElement (int i)
+	{
+		if (i >= this.size() || i < 0)
+			throw new IndexOutOfBoundsException();
+
+		return list[calculateArrayIndex(i, frontIndex)];
+	}
+
+	/**
+	 * Changes an element's value in this list. This updates the modification counter
+	 * 
+	 * @param i
+	 *            the element to change
+	 * @param value
+	 *            the new value (any double) for this element
+	 * 
+	 * @exception IndexOutOfBoundsException
+	 * 				If attempt to set element in a position larger than current element size
+	 * 
+	 */
+	public void setElement (int i, double value)
+	{
+		//throw new RuntimeException ("This method has not yet been written by the student.");
+		if (i >= this.size() || i < 0)
+			throw new IndexOutOfBoundsException();
+
+		list[calculateArrayIndex(i, frontIndex)] = value;
+		modificationCount++;
+	}
+
+
+
+	/**
+	 * 
+	 * Adds element at the rear of the list and makes it the last entry of 
+	 * the list. It also updates element count and modification count.
+	 * 
+	 * @param value
+	 *            any double
+	 */
+	public void append (double value)
+	{
+		ensureCapacity(this.size());
+
+		list[calculateArrayIndex(elementSize, frontIndex)] = value;
+		elementSize++;
+		modificationCount++;
+	}
+
+	/**
+	 * Adds element in front of the first element and alters front index to align with 
+	 * Rolling list. The added element becomes the first entry. It increases element 
+	 * size and modification count.
+	 * 
+	 * @param value
+	 *            any double
+	 */
+	public void prepend (double value)
+	{
+		ensureCapacity(this.size());
+		frontIndex--;
+		list[calculateArrayIndex(PREPEND_POS, frontIndex)] = value;
+		elementSize++;
+		modificationCount++;
+	}
+
+	/**
+	 * Removes the last entry in the list (decreasing the element count). The
+	 * last entry is the entry with an element index of (length of list) - 1.
+	 * 
+	 * @throws NoSuchElementException
+	 *             if the list is empty prior to this call
+	 */
+	public void removeLast ()
+	{
+		//throw new RuntimeException ("This method has not yet been written by the student.");
+		if (elementSize <= 0)
+			throw new NoSuchElementException();
+		elementSize--;
+	}
+
+	/**
+	 * Removes the first entry in the list (decreasing the element count). The
+	 * first entry is the entry with an element index of 0.
+	 * 
+	 * @throws NoSuchElementException
+	 *             if the list is empty prior to this call
+	 */
+	public void removeFirst ()
+	{
+		//throw new RuntimeException ("This method has not yet been written by the student.");
+		if (elementSize <= 0)
+			throw new NoSuchElementException();
+		frontIndex++;
+		elementSize--;
+	}
+
+	/**
+	 * Returns the number of elements in this rolling list.
+	 * 
+	 * @return 
+	 *         the number of elements in this list
+	 */
+	public int size ()
+	{
+		return elementSize;
+	}
+
+	// Public utility methods (instrumentation)
+
+	/**
+	 * Clears (sets to 0) the array modification count.
+	 */
+	public void resetArrayModificationCount ()
+	{
+		modificationCount = 0;
+	}
+
+	/**
+	 * Returns the array modification count.
+	 * 
+	 * @return 
+	 *         a count of the number of times the backing array has changed
+	 */
+	public int getArrayModificationCount ()
+	{
+		return modificationCount;
+	}
+
+	/**
+	 * Returns the percentage of the backing array that is unused. Return values
+	 * will be between [0.0 and 1.0].
+	 * 
+	 * @return 
+	 *         the percentage of the backing array that is wasted space
+	 */
+	public double wastedSpace ()
+	{
+		return  (1.0 * list.length - this.size())/list.length;
+	}
+
+}

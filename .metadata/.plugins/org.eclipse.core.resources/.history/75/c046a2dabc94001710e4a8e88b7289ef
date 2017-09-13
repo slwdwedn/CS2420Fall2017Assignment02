@@ -1,0 +1,52 @@
+package lab03;
+
+public class RollingLabList implements RollingList<T> {
+	public static void main() {
+	}
+
+	@Override
+	public double getElement(int i) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setElement(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void append() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void prepend() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public <T> void removeLast() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public <T> void removeFirst() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	
+	
+}

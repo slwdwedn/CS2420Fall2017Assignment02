@@ -1,0 +1,32 @@
+package assignment02;
+
+public class RollingListMain {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		RollingList testObj = new RollingList(2.0f, 2);
+
+		double increasedDouble = 0.1;
+		
+		
+		for (int i = 0; i < 7; i++)
+		{
+			increasedDouble += 0.1;
+			testObj.append(increasedDouble);
+		}
+		System.out.println("Array size: " + testObj.list.length);
+		
+
+		//testObj.setElement(0, 0.8);
+
+		for (int i = 0; i < testObj.size(); i++)
+		{
+			System.out.println(testObj.getElement(i));
+		}
+
+		System.out.println("Modification Count: " + testObj.getArrayModificationCount());
+		System.out.println("Size Count: " + testObj.size());
+		System.out.println("Wasted Space: " + testObj.wastedSpace());
+	}
+
+}
